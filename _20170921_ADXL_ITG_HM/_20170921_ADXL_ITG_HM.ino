@@ -14,15 +14,8 @@ void loop() {
   RGB_ITG2000.readGyro();
   RGB_HM5883.getRaw();
   RGB_ADXL345.lowpass();
-  float heading = atan2(RGB_HM5883.Y, RGB_HM5883.X);
-  float declinationAngle = 0.22;
-  heading += declinationAngle;
-  if (heading < 0)
-    heading += 2 * PI;
-  if (heading > 2 * PI)
-    heading -= 2 * PI;
-  float headingDegrees = heading * 180 / M_PI;
-  Serial.print("Heading (degrees): "); Serial.println(headingDegrees);
+  RGB_HM5883.getDegrees();
+  Serial.print("Heading (degrees): "); Serial.println(RGB_HM5883.angle);
 
   //delay(500);
   //RGB_HM5883.display();

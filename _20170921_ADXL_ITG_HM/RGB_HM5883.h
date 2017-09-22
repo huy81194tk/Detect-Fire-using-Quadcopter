@@ -11,9 +11,9 @@
 
 class RGB_HM5883 {
   private:
-    static float HM5883_Gauss_LSB_XY = 1100.0F;
-    static float HM5883_Gauss_LSB_Z  = 980.0F;
-    int angle;
+    float HM5883_Gauss_LSB_XY = 1100.0;
+    float HM5883_Gauss_LSB_Z  = 980.0;
+    
     int16_t read16(uint8_t reg) {
       return ((int16_t)(WireSoft.ReadData(HM5883_ADDRESS, reg)) << 8) | WireSoft.ReadData(HM5883_ADDRESS, reg + 1);
     }
@@ -21,6 +21,7 @@ class RGB_HM5883 {
     float X = 0;
     float Y = 0;
     float Z = 0;
+    int angle;
     void begin() {
       WireSoft.WriteData(HM5883_ADDRESS, HM5883_Mode_Register, 0x00);
     }
