@@ -1,18 +1,21 @@
-#define HM5883_ADDRESS         (0x1E)
-#define HM5883_Mode_Register   (0x02)
-#define HM5883_DOX0            (0X03)
-#define HM5883_DOX1            (0X04)
-#define HM5883_DOY0            (0X05)
-#define HM5883_DOY1            (0X06)
-#define HM5883_DOZ0            (0X07)
-#define HM5883_DOZ1            (0X08)
+#define HM5883_ADDRESS           (0x1E)
+#define HM5883_Config_Register_A (0x02)
+#define HM5883_Config_Register_B (0x02)
+#define HM5883_Mode_Register     (0x02)
+#define HM5883_DOX0              (0X03)
+#define HM5883_DOX1              (0X04)
+#define HM5883_DOY0              (0X05)
+#define HM5883_DOY1              (0X06)
+#define HM5883_DOZ0              (0X07)
+#define HM5883_DOZ1              (0X08)
+#define mgPerdigit               (0.92)
 
 #define SENSORS_GAUSSE_TO_MICROTESLA  (100)
 
 class RGB_HM5883 {
   private:
     float HM5883_Gauss_LSB_XY = 1100.0;
-    float HM5883_Gauss_LSB_Z  = 980.0;
+    float HM5883_Gauss_LSB_Z  = 980.0;  
     int fixedHeadingDegrees;
     int16_t read16(uint8_t reg) {
       return ((int16_t)(WireSoft.ReadData(HM5883_ADDRESS, reg)) << 8) | WireSoft.ReadData(HM5883_ADDRESS, reg + 1);
@@ -24,6 +27,9 @@ class RGB_HM5883 {
     int angle;
     void begin() {
       WireSoft.WriteData(HM5883_ADDRESS, HM5883_Mode_Register, 0x00);
+      WireSoft.WriteData(HM5883_ADDRESS, HM5883_Config_Register_B, 0x20);
+      WireSoft.WriteData(HM5883_ADDRESS, HM5883_Config_Register_A, (WireSoft.ReadData(HM5883_ADDRESS, HM5883_Config_Register_A)&0b1110011)|0b00010100);
+      WireSoft.WriteData(HM5883_ADDRESS, HM5883_Config_Register_B, 0x20);
     }
     void getRaw() {
       X = (float)read16(HM5883_DOX0) / HM5883_Gauss_LSB_XY * SENSORS_GAUSSE_TO_MICROTESLA;
