@@ -13,7 +13,7 @@ class RGB_HM5883 {
   private:
     float HM5883_Gauss_LSB_XY = 1100.0;
     float HM5883_Gauss_LSB_Z  = 980.0;
-    
+    int fixedHeadingDegrees;
     int16_t read16(uint8_t reg) {
       return ((int16_t)(WireSoft.ReadData(HM5883_ADDRESS, reg)) << 8) | WireSoft.ReadData(HM5883_ADDRESS, reg + 1);
     }
@@ -30,15 +30,25 @@ class RGB_HM5883 {
       Y = (float)read16(HM5883_DOY0) / HM5883_Gauss_LSB_XY * SENSORS_GAUSSE_TO_MICROTESLA;
       Z = (float)read16(HM5883_DOZ0) / HM5883_Gauss_LSB_Z * SENSORS_GAUSSE_TO_MICROTESLA;
     }
-    void getDegrees(){
+    void getDegrees() {
       getRaw();
-      float heading = atan2(Y,X);
-      float decilinationAngle = 0.22;
+      float heading = atan2(Y, X);
+      float decilinationAngle = (14.0 - (35.0 / 60.0)) / (180 / M_PI);
       heading += decilinationAngle;
-      if (heading < 0) heading += 2*PI;
-      if (heading > 2*PI) heading -= 2*PI;
-      float headingDegrees = heading * 180/M_PI;
-      angle = (int)headingDegrees;
+      if (heading < 0) heading += 2 * PI;
+      if (heading > 2 * PI) heading -= 2 * PI;
+      float headingDegrees = heading * 180 / M_PI;
+      if (headingDegrees >= 1 && headingDegrees < 240)
+      {
+        fixedHeadingDegrees = map (headingDegrees * 100, 0, 239 * 100, 0, 179 * 100) / 100.00;
+      }
+      else {
+        if (headingDegrees >= 240)
+        {
+          fixedHeadingDegrees = map (headingDegrees * 100, 240 * 100, 360 * 100, 180 * 100, 360 * 100) / 100.00;
+        }
+      }
+      angle = (int)(fixedHeadingDegrees/18);
     }
     void display() {
       Serial.print("XMag: "); Serial.print(X); Serial.print("---");
