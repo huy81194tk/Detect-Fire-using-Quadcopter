@@ -83,12 +83,7 @@ class RGB_ITG2000 {
       dt = elapsed / 1000.0;
       start = elapsed = 0;
     }
-    void update(float minX = -0.02, float maxX = 0.02, float minY = -0.02, float maxY = 0.02, float minZ = -1.052, float maxZ = 1.052) {
-      if (RGB_ADXL345.X >= minX && RGB_ADXL345.X <= maxX && RGB_ADXL345.Y >= minY && RGB_ADXL345.Y <= maxY && RGB_ADXL345.Z >= minZ && RGB_ADXL345.Z <= maxZ) {
-        X = 0;
-        Y = 0;
-      }
-    }
+    
     void updateT(float minX = -0.01, float maxX = 0.01, float minY = -0.01, float maxY = 0.01, float minZ = -1.051, float maxZ = 1.051) {
       if (RGB_ADXL345.X >= minX && RGB_ADXL345.X <= maxX) X = 0;
       if (RGB_ADXL345.Y >= minY && RGB_ADXL345.Y <= maxY) Y = 0;
