@@ -14,12 +14,17 @@
 #define ITG2000_GYRO_ZOUT_L       (0x22)
 #define ITG2000_PWR_MGM           (0x3E)
 
+SimpleKalmanFilter ITG_fil_X(1, 1, 0.001);
+SimpleKalmanFilter ITG_fil_Y(1, 1, 0.001);
+SimpleKalmanFilter ITG_fil_Z(1, 1, 0.001);
+
 class RGB_ITG2000 {
   private:
     float offsetX = 0;
     float offsetY = 0;
     float offsetZ = 0;
     float dt = 0.015;
+    
 
     unsigned long start, finish, elapsed;
     int16_t read16(uint8_t reg) {
@@ -43,14 +48,14 @@ class RGB_ITG2000 {
       autoOffset();
     }
     void getRaw() {
-      rX = (float)read16(ITG2000_GYRO_XOUT_H) * 0.07;
-      rY = (float)read16(ITG2000_GYRO_YOUT_H) * 0.07;
-      rZ = (float)read16(ITG2000_GYRO_ZOUT_H) * 0.07;
+      rX = (float)ITG_fil_X.updateEstimate(read16(ITG2000_GYRO_XOUT_H)) * 0.07;
+      rY = (float)ITG_fil_Y.updateEstimate(read16(ITG2000_GYRO_YOUT_H)) * 0.07;
+      rZ = (float)ITG_fil_Z.updateEstimate(read16(ITG2000_GYRO_ZOUT_H)) * 0.07;
     }
     void autoOffset() {
       float ox = 0;
       float oy = 0;
-      float  oz = 0;
+      float oz = 0;
       for (int i = 0; i < 1000; i++) {
         getRaw();
         ox = ox + rX;
@@ -61,9 +66,6 @@ class RGB_ITG2000 {
       offsetX = ox / 1000.0;
       offsetY = oy / 1000.0;
       offsetZ = oz / 1000.0;
-    }
-    void updateRaw() {
-
     }
     void startGyro() {
       start = millis();
@@ -93,6 +95,11 @@ class RGB_ITG2000 {
       Serial.print("XGyro: "); Serial.print(X); Serial.print("---");
       Serial.print("YGyro: "); Serial.print(Y); Serial.print("---");
       Serial.print("ZGyro: "); Serial.print(Z); Serial.println();
+    }
+    void display_plot() {
+      Serial.print(X);Serial.print(",");
+      Serial.print(Y);Serial.print(",");
+      Serial.print(Z);Serial.println();
     }
 } RGB_ITG2000;
 
