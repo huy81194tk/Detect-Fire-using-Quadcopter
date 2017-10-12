@@ -29,7 +29,9 @@
 #define ADXL345_DATAZ1          (0x37)
 #define ADXL345_FIFO_CTL        (0x38)
 #define ADXL345_FIFO_STATUS     (0x39)
-
+SimpleKalmanFilter ADXL_fil_X(2, 1, 0.1);
+SimpleKalmanFilter ADXL_fil_Y(2, 1, 0.1);
+SimpleKalmanFilter ADXL_fil_Z(2, 1, 0.1);
 class RGB_ADXL345 {
   private:
     float offsetX = 0;
@@ -63,24 +65,40 @@ class RGB_ADXL345 {
       offsetY = oY;
       offsetZ = oZ;
     }
+    
     float readX() {
-      return ((float)read16(ADXL345_DATAX0) * 0.004) + offsetX;
+      return ((float)ADXL_fil_X.updateEstimate(read16(ADXL345_DATAX0))) + offsetX;
     }
     float readY() {
-      return ((float)read16(ADXL345_DATAY0) * 0.004) + offsetY;
+      return ((float)ADXL_fil_Y.updateEstimate(read16(ADXL345_DATAY0))) + offsetY;
     }
     float readZ() {
-      return ((float)read16(ADXL345_DATAZ0) * 0.004) + offsetZ;
+      return ((float)ADXL_fil_Z.updateEstimate(read16(ADXL345_DATAZ0))) + offsetZ;
     }
+    /*
+    float readX() {
+      return ((float)read16(ADXL345_DATAX0)) + offsetX;
+    }
+    float readY() {
+      return ((float)read16(ADXL345_DATAY0)) + offsetY;
+    }
+    float readZ() {
+      return ((float)read16(ADXL345_DATAZ0)) + offsetZ;
+    }*/
     void lowpass() {
       float Xg = readX();
       float Yg = readY();
       float Zg = readZ();
+      X = Xg;
+      Y = Yg;
+      Z = Zg;
+      /*
       X = Xg * alpha + (X * (1.0 - alpha));
       Y = Yg * alpha + (Y * (1.0 - alpha));
       Z = Zg * alpha + (Z * (1.0 - alpha));
       roll = (atan2(-Y, Z) * 180.0) / M_PI;
       pitch = (atan2(X, sqrt(Y * Y + Z * Z)) * 180.0) / M_PI;
+      */
     }
     void autoOffset() {
       float ox = 0;
@@ -101,6 +119,11 @@ class RGB_ADXL345 {
       Serial.print("XGyro: "); Serial.print(X); Serial.print("---");
       Serial.print("YGyro: "); Serial.print(Y); Serial.print("---");
       Serial.print("ZGyro: "); Serial.print(Z); Serial.println();
+    }
+    void display_plot() {
+      Serial.print(X);Serial.print(",");
+      Serial.print(Y);Serial.print(",");
+      Serial.print(Z);Serial.println();
     }
 } RGB_ADXL345;
 

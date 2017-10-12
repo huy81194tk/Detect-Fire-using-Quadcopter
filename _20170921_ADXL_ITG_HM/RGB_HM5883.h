@@ -57,7 +57,8 @@ class RGB_HM5883 {
     }
     void getDegrees() {
       getRaw();
-      heading = atan2(X - 470, Z + 482);
+      //heading = atan2(X - 470, Z + 482);
+      heading = atan2( Z + 482,X - 470);
       float declinationAngle = 0.22;
       heading += declinationAngle;
       if (heading < 0)

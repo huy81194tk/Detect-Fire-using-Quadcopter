@@ -14,9 +14,9 @@
 #define ITG2000_GYRO_ZOUT_L       (0x22)
 #define ITG2000_PWR_MGM           (0x3E)
 
-SimpleKalmanFilter ITG_fil_X(1, 1, 0.001);
-SimpleKalmanFilter ITG_fil_Y(1, 1, 0.001);
-SimpleKalmanFilter ITG_fil_Z(1, 1, 0.001);
+SimpleKalmanFilter ITG_fil_X(1, 1, 0.01);
+SimpleKalmanFilter ITG_fil_Y(1, 1, 0.01);
+SimpleKalmanFilter ITG_fil_Z(1, 1, 0.01);
 
 class RGB_ITG2000 {
   private:
@@ -99,7 +99,8 @@ class RGB_ITG2000 {
     void display_plot() {
       Serial.print(X);Serial.print(",");
       Serial.print(Y);Serial.print(",");
-      Serial.print(Z);Serial.println();
+      Serial.print(Z);Serial.print(",");
+      //Serial.println();
     }
 } RGB_ITG2000;
 
