@@ -34,9 +34,12 @@ SimpleKalmanFilter ADXL_fil_Y(2, 1, 0.1);
 SimpleKalmanFilter ADXL_fil_Z(2, 1, 0.1);
 class RGB_ADXL345 {
   private:
-    float offsetX = 0;
-    float offsetY = 0;
-    float offsetZ = 0;
+    float offsetX = 12;
+    float offsetY = 8.3;
+    float offsetZ = -234.65;
+    //float offsetX = 0;
+    //float offsetY = 0;
+    //float offsetZ = 0;
     float alpha = 0.5;
     int16_t read16(uint8_t reg) {
       return ((int8_t)(WireSoft.ReadData(ADXL345_ADDRESS, reg + 1)) << 8) | WireSoft.ReadData(ADXL345_ADDRESS, reg);
@@ -123,7 +126,7 @@ class RGB_ADXL345 {
     void display_plot() {
       Serial.print(X);Serial.print(",");
       Serial.print(Y);Serial.print(",");
-      Serial.print(Z);Serial.println();
+      Serial.print(Z);Serial.print(",");
     }
 } RGB_ADXL345;
 

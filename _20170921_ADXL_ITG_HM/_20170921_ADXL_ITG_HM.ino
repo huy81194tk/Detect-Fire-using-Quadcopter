@@ -37,7 +37,7 @@ void loop() {
   RGB_HM5883.getDegrees();
   //Bỏ 2 dòng tiếp theo và thêm PID vào đây
   //RGB_HM5883.display_plot();
-  //RGB_ADXL345.display_plot();
+  RGB_ADXL345.display_plot();
   InputX = (double)RGB_ITG2000.X;
   InputY = (double)RGB_ITG2000.Y;
   InputZ = (double)RGB_ITG2000.Z;
@@ -64,7 +64,7 @@ void Init_GY_85() {
   RGB_ADXL345.begin(0.5);
   RGB_ITG2000.begin();
   RGB_HM5883.begin();
-  RGB_ADXL345.autoOffset();
+  //RGB_ADXL345.autoOffset();
   RGB_HM5883.start();
   //RGB_HM5883.autoOffset();
   Serial.println("Initialized!");
